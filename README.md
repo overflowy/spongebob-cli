@@ -12,6 +12,7 @@ Why not.
 - List all available episodes
 - Stream episodes directly with minimal user interaction
 - Customize the video player used for streaming
+- Download all episodes asynchronously
 
 ## Usage
 
@@ -19,6 +20,8 @@ Running spongebob-cli without any flags will prompt the user to select the episo
 
 ```
 Usage of spongebob-cli:
+  -d int
+        download all episodes asynchronously but max [d] episode at a time (default -1)
   -l    list episodes and quit
   -p int
         play the wanted episode without any user interaction (default -1)
