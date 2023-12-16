@@ -17,7 +17,7 @@ var (
 	play        = flag.Int("p", -1, "play the wanted episode without any user interaction")
 	list        = flag.Bool("l", false, "list episodes and quit")
 	videoPlayer = flag.String("vp", "mpv", "use another video player [default=mpv]")
-	download    = flag.Int("d", -1, "download all episodes asynchronously but max [d] episode at a time")
+	download    = flag.Int("d", -1, "download all episodes asynchronously but max [d] episodes at a time")
 )
 
 func getEpisodes() ([]string, []string) {

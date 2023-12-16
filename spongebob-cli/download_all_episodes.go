@@ -23,8 +23,8 @@ func downloadAllEpisodes(maxConcurrent int) error {
 
 	episodesUrls, _ := getEpisodes()
 
-	// asynchronously download all episodes but max {maxConcurrent} episode at a time.
-	// source: https://gist.github.com/AntoineAugusti/80e99edfe205baf7a094?permalink_comment_id=4088548#gistcomment-4088548
+	// Asynchronously download all episodes but max {maxConcurrent} episode at a time.
+	// Source: https://gist.github.com/AntoineAugusti/80e99edfe205baf7a094?permalink_comment_id=4088548#gistcomment-4088548
 	sem := semaphore.NewWeighted(int64(maxConcurrent))
 	ctx := context.TODO()
 	var wg sync.WaitGroup

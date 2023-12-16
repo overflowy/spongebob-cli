@@ -1,4 +1,5 @@
 # spongebob-cli
+
 SpongeBob delivered straight from your terminal
 
 ![example](https://github.com/overflowy/spongebob-cli/assets/98480250/c3280a20-bc16-40c5-b1d8-6ce4602331f1)
@@ -21,7 +22,7 @@ Running spongebob-cli without any flags will prompt the user to select the episo
 ```
 Usage of spongebob-cli:
   -d int
-        download all episodes asynchronously but max [d] episode at a time (default -1)
+        download all episodes asynchronously but max [d] episodes at a time (default -1)
   -l    list episodes and quit
   -p int
         play the wanted episode without any user interaction (default -1)
