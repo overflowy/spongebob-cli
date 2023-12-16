@@ -17,6 +17,7 @@ var (
 	play        = flag.Int("p", -1, "play the wanted episode without any user interaction")
 	list        = flag.Bool("l", false, "list episodes and quit")
 	videoPlayer = flag.String("vp", "mpv", "use another video player [default=mpv]")
+	download    = flag.Int("d", -1, "download all episodes asynchronously but max [d] episode at a time")
 )
 
 func getEpisodes() ([]string, []string) {
@@ -125,6 +126,13 @@ func main() {
 		fmt.Printf("Playing '%s'...\n", episodesTitles[user-1])
 		playVideo(video, *videoPlayer)
 	} else {
+		if *download > 0 {
+			if err := downloadAllEpisodes(*download); err != nil {
+				fmt.Printf("Error while download all episodes: %v\n", err)
+			}
+			return
+		}
+
 		if *play >= 1 {
 			video := extractVideo(episodesUrls[*play-1])
 			fmt.Printf("Playing '%s'...\n", episodesTitles[*play])
