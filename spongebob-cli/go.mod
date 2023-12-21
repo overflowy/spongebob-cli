@@ -1,4 +1,4 @@
-module spongebob-cli
+module github.com/overflowy/spongebob-cli/spongebob-cli
 
 go 1.21.5
 
