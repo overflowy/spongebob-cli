@@ -65,9 +65,23 @@ func listEpisodes(episodesTitles []string) {
 	for i, title := range episodesTitles {
 		table.Append([]string{title, fmt.Sprintf("%d", i+1)})
 	}
+	fmt.Println(episodesTitles[2])
 
 	table.Render()
 }
+
+func favouriteEpisode(episodeNumber int){
+
+	favouritedEpisodesNum:=[]int{}
+	favouritedEpisodes:=[]string{}
+	_,episodeTitles:=getEpisodes()
+
+	favouritedEpisodesNum = append(favouritedEpisodesNum,episodeNumber)
+
+	favouritedEpisodes = append(favouritedEpisodes, episodeTitles[episodeNumber-1])
+
+	fmt.Println(favouritedEpisodes,favouritedEpisodesNum)
+}	
 
 func extractVideo(source string) string {
 	resp, err := http.Get(source)
@@ -117,8 +131,9 @@ func userInput(episodesUrls []string) int {
 
 func main() {
 	flag.Parse()
-	episodesUrls, episodesTitles := getEpisodes()
 
+	favouriteEpisode(200)
+	episodesUrls, episodesTitles := getEpisodes()
 	if len(os.Args[1:]) == 0 {
 		listEpisodes(episodesTitles)
 		user := userInput(episodesUrls)
