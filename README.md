@@ -21,11 +21,17 @@ Running spongebob-cli without any flags will prompt the user to select the episo
 
 ```
 Usage of spongebob-cli:
+  -af int
+        add an episode to your favourites
   -d int
         download all episodes asynchronously but max [d] episodes at a time (default -1)
   -l    list episodes and quit
+  -lf
+        list favourite episodes
   -p int
         play the wanted episode without any user interaction (default -1)
+  -rf int
+        remove an episode from your favourites
   -vp string
         use another video player [default=mpv] (default "mpv")
 ```
