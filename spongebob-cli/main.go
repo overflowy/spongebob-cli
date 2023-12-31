@@ -1,8 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"os/exec"
@@ -18,7 +20,11 @@ var (
 	list        = flag.Bool("l", false, "list episodes and quit")
 	videoPlayer = flag.String("vp", "mpv", "use another video player [default=mpv]")
 	download    = flag.Int("d", -1, "download all episodes asynchronously but max [d] episodes at a time")
+	listFavourites = flag.Bool("lf", false, "List favorite episodes")
+	addFavouriteEpisode = flag.Int("af",0,"Adds the episode to your favourites")
+	delFavouriteEpisode = flag.Int("df",0,"Removes the wanted episode from the favourite list")
 )
+
 
 func getEpisodes() ([]string, []string) {
 	resp, err := http.Get(baseUrl)
@@ -69,6 +75,92 @@ func listEpisodes(episodesTitles []string) {
 	table.Render()
 }
 
+var favouriteEpisodes = make(map[int]string)
+func favouriteEpisode(episodeNumber int) {
+	if episodeNumber == 0 || episodeNumber > 340 {
+		fmt.Println("Enter a valid episode number")
+		return
+	}
+
+	_, episodeTitles := getEpisodes()
+	favouriteEpisodes[episodeNumber] = episodeTitles[episodeNumber-1]
+
+	// Open the file in read-write mode
+	file, err := os.OpenFile("favourites.json", os.O_RDWR|os.O_CREATE, 0644)
+	if err != nil {
+		fmt.Println("Error opening file:", err)
+		return
+	}
+	defer file.Close()
+
+	// Decode existing data from the file
+	decoder := json.NewDecoder(file)
+	if err := decoder.Decode(&favouriteEpisodes); err != nil && err != io.EOF {
+		fmt.Println("Error decoding JSON:", err)
+		return
+	}
+
+	// Move to the beginning of the file to overwrite its contents
+	if _, err := file.Seek(0, 0); err != nil {
+		fmt.Println("Error seeking file:", err)
+		return
+	}
+
+	// Write the updated map back to the file
+	encoder := json.NewEncoder(file)
+	if err := encoder.Encode(favouriteEpisodes); err != nil {
+		fmt.Println("Error encoding JSON:", err)
+		return
+	}
+}
+
+func listFavouriteEpisode(){
+	file,err:=os.Open("favourites.json")
+	if err!=nil{
+		fmt.Println("err opening file",err)
+	}
+	defer file.Close()
+	decoder:=json.NewDecoder(file)
+	err = decoder.Decode(&favouriteEpisodes)
+	if err!=nil{
+		fmt.Println("error decoding",err)
+	}
+	fmt.Println("Your Favourite Episodes")
+	for key,value:=range favouriteEpisodes{
+		fmt.Printf("Episode %d : %s \n",key,value)
+	}
+
+}
+
+var favouriteEpisodesJson = make(map[int]string)
+func unFavouriteEpisode(episodeNumber int){
+
+	file, err := os.OpenFile("favourites.json", os.O_RDWR|os.O_CREATE, 0644)
+	decoder := json.NewDecoder(file)
+	if err := decoder.Decode(&favouriteEpisodesJson); err != nil && err != io.EOF {
+		fmt.Println("Error decoding JSON:", err)
+		return
+	}
+
+	delete(favouriteEpisodesJson,episodeNumber)
+	if err := file.Truncate(0); err != nil {
+		fmt.Println("Error truncating file:", err)
+		return
+	}
+	if _, err := file.Seek(0, 0); err != nil {
+		fmt.Println("Error seeking file:", err)
+		return
+	}
+
+	defer file.Close()
+
+	encoder:=json.NewEncoder(file)
+	err = encoder.Encode(favouriteEpisodesJson)
+	if err!=nil{
+		fmt.Println("error encoding json:",err)
+	}
+}
+
 func extractVideo(source string) string {
 	resp, err := http.Get(source)
 	if err != nil {
@@ -117,8 +209,8 @@ func userInput(episodesUrls []string) int {
 
 func main() {
 	flag.Parse()
+	
 	episodesUrls, episodesTitles := getEpisodes()
-
 	if len(os.Args[1:]) == 0 {
 		listEpisodes(episodesTitles)
 		user := userInput(episodesUrls)
@@ -139,6 +231,16 @@ func main() {
 			playVideo(video, *videoPlayer)
 		} else if *list {
 			listEpisodes(episodesTitles)
+		}
+		if *listFavourites{
+			listFavouriteEpisode()
+			return
+		}
+		if *addFavouriteEpisode!=0{
+			favouriteEpisode(*addFavouriteEpisode)
+		}
+		if *delFavouriteEpisode!=0{
+			unFavouriteEpisode(*delFavouriteEpisode)
 		}
 	}
 }
