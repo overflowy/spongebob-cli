@@ -115,7 +115,7 @@ func favouriteEpisode(episodeNumber int) {
 	}
 }
 
-func listFavouriteEpisode() {
+func listFavouriteEpisodes() {
 	file, err := os.Open("favourites.json")
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
@@ -134,10 +134,15 @@ func listFavouriteEpisode() {
 		return
 	}
 
-	fmt.Println("Your Favourite Episodes")
-	for key, value := range favouriteEpisodes {
-		fmt.Printf("Episode %d : %s \n", key, value)
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"Episode", "Number"})
+	table.SetAutoWrapText(false)
+
+	for i, title := range favouriteEpisodes {
+		table.Append([]string{title, fmt.Sprintf("%d", i+1)})
 	}
+
+	table.Render()
 }
 
 var favouriteEpisodesJson = make(map[int]string)
@@ -242,7 +247,7 @@ func main() {
 			listEpisodes(episodesTitles)
 		}
 		if *listFavourites {
-			listFavouriteEpisode()
+			listFavouriteEpisodes()
 			return
 		}
 		if *addFavouriteEpisode != 0 {
