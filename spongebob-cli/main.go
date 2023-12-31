@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -117,19 +118,26 @@ func favouriteEpisode(episodeNumber int) {
 func listFavouriteEpisode() {
 	file, err := os.Open("favourites.json")
 	if err != nil {
-		fmt.Println("Error opening favorites file", err)
+		if errors.Is(err, os.ErrNotExist) {
+			fmt.Println("You don't have any favourite episodes.")
+			return
+		}
+		fmt.Println(err)
+		return
 	}
 	defer file.Close()
+
 	decoder := json.NewDecoder(file)
 	err = decoder.Decode(&favouriteEpisodes)
 	if err != nil {
 		fmt.Println("Error decoding file", err)
+		return
 	}
+
 	fmt.Println("Your Favourite Episodes")
 	for key, value := range favouriteEpisodes {
 		fmt.Printf("Episode %d : %s \n", key, value)
 	}
-
 }
 
 var favouriteEpisodesJson = make(map[int]string)
