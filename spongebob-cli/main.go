@@ -20,9 +20,9 @@ var (
 	list                = flag.Bool("l", false, "list episodes and quit")
 	videoPlayer         = flag.String("vp", "mpv", "use another video player [default=mpv]")
 	download            = flag.Int("d", -1, "download all episodes asynchronously but max [d] episodes at a time")
-	listFavourites      = flag.Bool("lf", false, "List favorite episodes")
-	addFavouriteEpisode = flag.Int("af", 0, "Adds the episode to your favourites")
-	delFavouriteEpisode = flag.Int("df", 0, "Removes the wanted episode from the favourite list")
+	listFavourites      = flag.Bool("lf", false, "list favourite episodes")
+	addFavouriteEpisode = flag.Int("af", 0, "add an episode to your favourites")
+	delFavouriteEpisode = flag.Int("rf", 0, "remove an episode from your favourites")
 )
 
 func getEpisodes() ([]string, []string) {
@@ -117,13 +117,13 @@ func favouriteEpisode(episodeNumber int) {
 func listFavouriteEpisode() {
 	file, err := os.Open("favourites.json")
 	if err != nil {
-		fmt.Println("err opening file", err)
+		fmt.Println("Error opening favorites file", err)
 	}
 	defer file.Close()
 	decoder := json.NewDecoder(file)
 	err = decoder.Decode(&favouriteEpisodes)
 	if err != nil {
-		fmt.Println("error decoding", err)
+		fmt.Println("Error decoding file", err)
 	}
 	fmt.Println("Your Favourite Episodes")
 	for key, value := range favouriteEpisodes {
@@ -158,7 +158,7 @@ func unFavouriteEpisode(episodeNumber int) {
 	encoder := json.NewEncoder(file)
 	err = encoder.Encode(favouriteEpisodesJson)
 	if err != nil {
-		fmt.Println("error encoding json:", err)
+		fmt.Println("Error encoding JSON:", err)
 	}
 }
 
